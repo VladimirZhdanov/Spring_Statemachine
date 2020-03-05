@@ -14,6 +14,6 @@ public class HideGuard implements Guard<PurchaseState, PurchaseEvent> {
 
     @Override
     public boolean evaluate(StateContext<PurchaseState, PurchaseEvent> context) {
-        return false;
+        return true;
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.domain.service.purchase.impl;
 import com.example.demo.domain.service.purchase.PurchaseService;
 import com.example.demo.domain.statemachine.event.PurchaseEvent;
 import com.example.demo.domain.statemachine.state.PurchaseState;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.persist.StateMachinePersister;
@@ -23,6 +24,7 @@ public class DefaultPurchaseService implements PurchaseService {
 
     private final StateMachineFactory<PurchaseState, PurchaseEvent> stateMachineFactory;
 
+    @Autowired
     public DefaultPurchaseService(
             StateMachinePersister<PurchaseState, PurchaseEvent, String> persister,
             StateMachineFactory<PurchaseState, PurchaseEvent> stateMachineFactory
