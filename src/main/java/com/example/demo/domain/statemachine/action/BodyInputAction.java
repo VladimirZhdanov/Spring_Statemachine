@@ -10,9 +10,11 @@ import org.springframework.statemachine.action.Action;
  * @version 1.0
  * @since 1.0.0
  */
-public class ErrorAction implements Action<MeltState, MeltEvent> {
+public class BodyInputAction implements Action<MeltState, MeltEvent> {
     @Override
     public void execute(StateContext<MeltState, MeltEvent> context) {
-        System.out.println("Ошибка при переходе в статус " + context.getTarget().getId());
+        context.getExtendedState().getVariables().put("BodyInput", true);
+        System.out.println(context.getStateMachine().getExtendedState().getVariables().size());
+        System.out.println("Body input");
     }
 }

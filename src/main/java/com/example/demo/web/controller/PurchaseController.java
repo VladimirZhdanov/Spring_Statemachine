@@ -1,6 +1,6 @@
 package com.example.demo.web.controller;
 
-import com.example.demo.domain.service.purchase.PurchaseService;
+import com.example.demo.domain.service.purchase.MeltService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,25 +13,39 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings("unused")
 public class PurchaseController {
 
-    private final PurchaseService purchaseService;
+    private final MeltService meltService;
 
-    public PurchaseController(PurchaseService purchaseService) {
-        this.purchaseService = purchaseService;
+    public PurchaseController(MeltService meltService) {
+        this.meltService = meltService;
     }
 
-    @RequestMapping(path = "/reserve")
-    public boolean reserve(final String userId, final String productId) {
-        return purchaseService.reserved(userId, productId);
+    @RequestMapping(path = "/chemical")
+    public boolean chemical(final String meltId) {
+        return meltService.chemicalAnalyze(meltId);
     }
 
-    @RequestMapping(path = "/cancel")
-    public boolean cancelReserve(final String userId) {
-        return purchaseService.cancelReserve(userId);
+    @RequestMapping(path = "/temperature")
+    public boolean temperature(final String meltId) {
+        return meltService.temperatureAnalyze(meltId);
     }
 
-    @RequestMapping(path = "/buy")
-    public boolean buyReserve(final String userId) {
-        return purchaseService.buy(userId);
+    @RequestMapping(path = "/pressure")
+    public boolean pressure(final String meltId) {
+        return meltService.pressureAnalyze(meltId);
     }
 
+    @RequestMapping(path = "/input")
+    public boolean input(final String meltId) {
+        return meltService.bodyInput(meltId);
+    }
+
+    @RequestMapping(path = "/check")
+    public boolean check(final String meltId) {
+        return meltService.check(meltId);
+    }
+
+    @RequestMapping(path = "/end")
+    public boolean end(final String meltId) {
+        return meltService.endCalculation(meltId);
+    }
 }

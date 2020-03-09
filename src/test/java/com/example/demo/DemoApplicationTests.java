@@ -1,7 +1,7 @@
 package com.example.demo;
 
-import com.example.demo.domain.statemachine.event.PurchaseEvent;
-import com.example.demo.domain.statemachine.state.PurchaseState;
+import com.example.demo.domain.statemachine.event.MeltEvent;
+import com.example.demo.domain.statemachine.state.MeltState;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,12 @@ import org.springframework.statemachine.test.StateMachineTestPlan;
 import org.springframework.statemachine.test.StateMachineTestPlanBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.example.demo.domain.statemachine.event.PurchaseEvent.*;
-import static com.example.demo.domain.statemachine.state.PurchaseState.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class DemoApplicationTests {
 
 	@Autowired
-	private StateMachineFactory<PurchaseState, PurchaseEvent> factory;
+	private StateMachineFactory<MeltState, MeltEvent> factory;
 
 	@Test
 	public void contextLoads() {
@@ -28,9 +25,9 @@ class DemoApplicationTests {
 
 	@Test
 	public void testWhenReservedCancel() throws Exception {
-		StateMachine<PurchaseState, PurchaseEvent> machine = factory.getStateMachine();
-		StateMachineTestPlan<PurchaseState, PurchaseEvent> plan =
-				StateMachineTestPlanBuilder.<PurchaseState, PurchaseEvent>builder()
+		StateMachine<MeltState, MeltEvent> machine = factory.getStateMachine();
+		StateMachineTestPlan<MeltState, MeltEvent> plan =
+				StateMachineTestPlanBuilder.<MeltState, MeltEvent>builder()
 						.defaultAwaitTime(2)
 						.stateMachine(machine)
 						.step()
@@ -53,9 +50,9 @@ class DemoApplicationTests {
 
 	@Test
 	public void testWhenPurchaseComplete() throws Exception {
-		StateMachine<PurchaseState, PurchaseEvent> machine = factory.getStateMachine();
-		StateMachineTestPlan<PurchaseState, PurchaseEvent> plan =
-				StateMachineTestPlanBuilder.<PurchaseState, PurchaseEvent>builder()
+		StateMachine<MeltState, MeltEvent> machine = factory.getStateMachine();
+		StateMachineTestPlan<MeltState, MeltEvent> plan =
+				StateMachineTestPlanBuilder.<MeltState, MeltEvent>builder()
 						.defaultAwaitTime(2)
 						.stateMachine(machine)
 						.step()

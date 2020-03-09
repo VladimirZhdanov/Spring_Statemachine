@@ -1,14 +1,11 @@
 package com.example.demo.config;
 
-import com.example.demo.domain.statemachine.action.BuyAction;
-import com.example.demo.domain.statemachine.action.CancelAction;
-import com.example.demo.domain.statemachine.action.ErrorAction;
-import com.example.demo.domain.statemachine.action.ReservedAction;
-import com.example.demo.domain.statemachine.event.PurchaseEvent;
+import com.example.demo.domain.statemachine.action.*;
+import com.example.demo.domain.statemachine.event.MeltEvent;
 import com.example.demo.domain.statemachine.guard.HideGuard;
-import com.example.demo.domain.statemachine.listener.PurchaseStateMachineApplicationListener;
+import com.example.demo.domain.statemachine.listener.MeltStateMachineApplicationListener;
 import com.example.demo.domain.statemachine.persist.PurchaseStateMachinePersister;
-import com.example.demo.domain.statemachine.state.PurchaseState;
+import com.example.demo.domain.statemachine.state.MeltState;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.action.Action;
@@ -23,8 +20,8 @@ import org.springframework.statemachine.persist.StateMachinePersister;
 
 import java.util.EnumSet;
 
-import static com.example.demo.domain.statemachine.event.PurchaseEvent.*;
-import static com.example.demo.domain.statemachine.state.PurchaseState.*;
+import static com.example.demo.domain.statemachine.event.MeltEvent.*;
+import static com.example.demo.domain.statemachine.state.MeltState.*;
 
 /**
  * @author v.zhdanov
@@ -33,78 +30,114 @@ import static com.example.demo.domain.statemachine.state.PurchaseState.*;
  */
 @Configuration
 @EnableStateMachineFactory
-public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<PurchaseState, PurchaseEvent> {
+public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<MeltState, MeltEvent> {
 
     @Override
-    public void configure(final StateMachineConfigurationConfigurer<PurchaseState, PurchaseEvent> config) throws Exception {
+    public void configure(final StateMachineConfigurationConfigurer<MeltState, MeltEvent> config) throws Exception {
         config
                 .withConfiguration()
                 .autoStartup(true)
-                .listener(new PurchaseStateMachineApplicationListener());
+                .listener(new MeltStateMachineApplicationListener());
     }
 
     @Override
-    public void configure(final StateMachineStateConfigurer<PurchaseState, PurchaseEvent> states) throws Exception {
+    public void configure(final StateMachineStateConfigurer<MeltState, MeltEvent> states) throws Exception {
         states
                 .withStates()
-                .initial(NEW)
-                .end(PURCHASE_COMPLETE)
-                .states(EnumSet.allOf(PurchaseState.class));
+                .initial(START)
+                .end(END)
+                .states(EnumSet.allOf(MeltState.class));
 
     }
 
     @Override
-    public void configure(final StateMachineTransitionConfigurer<PurchaseState, PurchaseEvent> transitions) throws Exception {
+    public void configure(final StateMachineTransitionConfigurer<MeltState, MeltEvent> transitions) throws Exception {
         transitions
                 .withExternal()
-                .source(NEW)
-                .target(RESERVED)
-                .event(RESERVE)
-                .action(reservedAction(), errorAction())
+                .source(START)
+                .target(MELT)
+                .event(CHEMICAL_ANALYZE)
+                .action(startAction(), errorAction())
+
+                .and()
+                .withInternal()
+                .source(MELT)
+                .event(PRESSURE_ANALYZE)
+                .action(pressureAction(), errorAction())
+
+                .and()
+                .withInternal()
+                .source(MELT)
+                .event(TEMPERATURE_ANALYZE)
+                .action(temperatureAction(), errorAction())
+
+                .and()
+                .withInternal()
+                .source(MELT)
+                .event(BODY_INPUT)
+                .action(inputAction(), errorAction())
+
+
 
                 .and()
                 .withExternal()
-                .source(RESERVED)
-                .target(CANCEL_RESERVED)
-                .event(RESERVE_DECLINE)
-                .action(cancelAction(), errorAction())
-
-                .and()
-                .withExternal()
-                .source(RESERVED)
-                .target(PURCHASE_COMPLETE)
-                .event(BUY)
+                .source(MELT)
+                .target(CALCULATION)
+                .event(CHECK_TO_SEND)
                 .guard(hideGuard())
-                .action(buyAction(), errorAction());
+                .action(calculationAction(), errorAction())
+
+                .and()
+                .withExternal()
+                .source(CALCULATION)
+                .target(END)
+                .event(MACHINE_OUT)
+                //.guard(hideGuard())
+                .action(endAction(), errorAction());
     }
 
     @Bean
-    public Action<PurchaseState, PurchaseEvent> reservedAction() {
-        return new ReservedAction();
+    public Action<MeltState, MeltEvent> temperatureAction() {
+        return new TemperatureAction();
     }
 
     @Bean
-    public Action<PurchaseState, PurchaseEvent> cancelAction() {
-        return new CancelAction();
+    public Action<MeltState, MeltEvent> pressureAction() {
+        return new PressureAction();
     }
 
     @Bean
-    public Action<PurchaseState, PurchaseEvent> buyAction() {
-        return new BuyAction();
+    public Action<MeltState, MeltEvent> inputAction() {
+        return new BodyInputAction();
     }
 
     @Bean
-    public Action<PurchaseState, PurchaseEvent> errorAction() {
+    public Action<MeltState, MeltEvent> startAction() {
+        return new StartMelt();
+    }
+
+    @Bean
+    public Action<MeltState, MeltEvent> calculationAction() {
+        return new CalculationAction();
+    }
+
+    @Bean
+    public Action<MeltState, MeltEvent> endAction() {
+        return new EndAction();
+    }
+
+    @Bean
+    public Action<MeltState, MeltEvent> errorAction() {
         return new ErrorAction();
     }
 
     @Bean
-    public Guard<PurchaseState, PurchaseEvent> hideGuard() {
+    public Guard<MeltState, MeltEvent> hideGuard() {
         return new HideGuard();
     }
 
     @Bean
-    public StateMachinePersister<PurchaseState, PurchaseEvent, String> persister() {
+    public StateMachinePersister<MeltState, MeltEvent, String> persister() {
         return new DefaultStateMachinePersister<>(new PurchaseStateMachinePersister());
     }
 }

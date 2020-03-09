@@ -5,6 +5,7 @@ package com.example.demo.domain.statemachine.state;
  * @version 1.0
  * @since 1.0.0
  */
-public enum PurchaseState {
-    NEW, RESERVED, CANCEL_RESERVED, PURCHASE_COMPLETE
+public enum MeltState {
+    START, MELT, CALCULATION, END,
+    T, P, I
 }
