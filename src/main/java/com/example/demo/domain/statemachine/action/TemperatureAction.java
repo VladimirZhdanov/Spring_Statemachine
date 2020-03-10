@@ -4,6 +4,7 @@ import com.example.demo.domain.statemachine.event.MeltEvent;
 import com.example.demo.domain.statemachine.state.MeltState;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
+import org.springframework.statemachine.listener.StateMachineListener;
 
 import java.util.Map;
 
@@ -22,7 +23,5 @@ public class TemperatureAction implements Action<MeltState, MeltEvent> {
         map.forEach((x, y) -> System.out.println(x));
         System.out.println(context.getStateMachine().getExtendedState().getVariables().size());
         System.out.println("Temperature analyse");
-        //context.getStateMachine().getInitialState().
-        context.getSource().entry(context);
     }
 }

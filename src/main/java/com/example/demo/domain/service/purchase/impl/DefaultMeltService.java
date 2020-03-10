@@ -59,6 +59,7 @@ public class DefaultMeltService implements MeltService {
                     .setHeader("foo", "bar")
                     .build();
             stateMachine.sendEvent(message);
+            persister.persist(stateMachine, meltId);
 
             //stateMachine.sendEvent(TEMPERATURE_ANALYZE);
         } catch (final Exception e) {
@@ -74,6 +75,7 @@ public class DefaultMeltService implements MeltService {
         try {
             persister.restore(stateMachine, meltId);
             stateMachine.sendEvent(PRESSURE_ANALYZE);
+            persister.persist(stateMachine, meltId);
         } catch (final Exception e) {
             e.printStackTrace();
             return false;
@@ -87,6 +89,7 @@ public class DefaultMeltService implements MeltService {
         try {
             persister.restore(stateMachine, meltId);
             stateMachine.sendEvent(BODY_INPUT);
+            persister.persist(stateMachine, meltId);
         } catch (final Exception e) {
             e.printStackTrace();
             return false;
@@ -101,6 +104,7 @@ public class DefaultMeltService implements MeltService {
         try {
             persister.restore(stateMachine, meltId);
             stateMachine.sendEvent(CHECK_TO_SEND);
+            persister.persist(stateMachine, meltId);
         } catch (final Exception e) {
             e.printStackTrace();
             return false;
